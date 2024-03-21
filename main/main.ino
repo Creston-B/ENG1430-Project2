@@ -70,7 +70,7 @@ void loop() {
   if(capread > wetval) { // Rotate 90 degrees clockwise if wet 
   stepper1.moveTo(45); // 200 steps for 90 degrees
   stepper2.moveTo(45); // 200 steps for 90 degrees
-  } else if (capread < wetval) { // Rotate 90 degrees counterclockwise if dry
+  } else if (capread < dryval) { // Rotate 90 degrees counterclockwise if dry
   stepper1.moveTo(0); // -200 steps for 90 degrees (opposite direction)
   stepper2.moveTo(0); // -200 steps for 90 degrees (opposite direction)
   }
