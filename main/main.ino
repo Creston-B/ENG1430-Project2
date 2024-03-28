@@ -5,19 +5,17 @@
 Adafruit_seesaw ss;
 Adafruit_MotorShield AFMS = Adafruit_MotorShield();
 
-Servo servo1;
-
 int WETVAL = 950; //temp wetval
-int DRYVAL = 450; //temp dryval
+int DRYVAL = 500; //temp dryval
+int SERVOTIME = 700; //ms for servo to spin for a valve cycle
 //value determinig if servo was put in open or closed state
-bool servo1open = false;
+bool valveopen;
 
-
+Servo secondservo;
+Servo mainservo;
 
 void setup() {
-  Serial.println("First Line of Code");
   Serial.begin(115200);
-  Serial.println("HELP");
 
   bool seesawinit = false;
   while(!seesawinit) {
@@ -43,21 +41,27 @@ void setup() {
   }
 
   // Attach a servo to pin #10
-  servo1.attach(10);
+  secondservo.attach(10);
+  mainservo.attach(9);
+
 
   // Get initial cap value
   uint16_t initread = ss.touchRead(0);
 
   if(initread >= 500) { // Rotate to closed potiiton if above or equal to arbitrary
-    servo1.write(180);
-    delay(800);
-    servo1.write(90);
-    servo1open = false;
+    secondservo.write(180);
+    mainservo.write(0);
+    delay(SERVOTIME);
+    secondservo.write(90);
+    mainservo.write(90);
+    valveopen = false;
   } else if (initread < 500) { // Rotate to open position if below arbitrary
-    servo1.write(0);
-    delay(800);
-    servo1.write(90);
-    servo1open = true;
+    secondservo.write(0);
+    mainservo.write(180);
+    delay(SERVOTIME);
+    secondservo.write(90);
+    mainservo.write(90);
+    valveopen = true;
   }
 }
 
@@ -67,23 +71,36 @@ void loop() {
   
 
   // test for wet / dry conditions
-  if((capread > WETVAL) && (servo1open == true)) { 
+  if((capread > WETVAL) && (valveopen == true)) { 
   // Rotate to closed potiiton if wet and open
-    servo1.write(180);
-    delay(800);
-    servo1.write(90);
-  } else if ((capread < DRYVAL) && (servo1open == false)) { 
+    secondservo.write(180);
+    delay(SERVOTIME);
+    secondservo.write(90);
+    delay(5000);
+    valveopen = false;
+    mainservo.write(0);
+    delay(SERVOTIME);
+    mainservo.write(90);
+  } else if ((capread < DRYVAL) && (valveopen == false)) { 
     // Rotate to open position if dry and closed
-    servo1.write(0);
-    delay(800);
-    servo1.write(90);
+    secondservo.write(0);
+    mainservo.write(180);
+    delay(SERVOTIME);
+    secondservo.write(90);
+    mainservo.write(90);
+    valveopen = true;
   }
   
   float tempC = ss.getTemp();
 
   Serial.print("Temperature: "); Serial.print(tempC); Serial.println("*C");
   Serial.print("Capacitive: "); Serial.println(capread);
+  if (valveopen) {
+  Serial.println("Water valves are open");
+  } else {
+  Serial.println("Water valves are closed");
+  }
 
-  // Pause for 2 seconds
-  delay(2000);
+  // Pause for 4 seconds
+  delay(4000);
 }
