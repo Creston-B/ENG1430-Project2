@@ -77,10 +77,10 @@ void loop() {
     delay(SERVOTIME);
     secondservo.write(90);
     delay(5000);
-    valveopen = false;
     mainservo.write(0);
     delay(SERVOTIME);
     mainservo.write(90);
+    valveopen = false;
   } else if ((capread < DRYVAL) && (valveopen == false)) { 
     // Rotate to open position if dry and closed
     secondservo.write(0);
@@ -100,7 +100,9 @@ void loop() {
   } else {
   Serial.println("Water valves are closed");
   }
-
+  Serial.println("");
+  Serial.println("-----------------------");
+  Serial.println("");
   // Pause for 4 seconds
   delay(4000);
 }
