@@ -76,7 +76,7 @@ void loop() {
     secondservo.write(180);
     delay(SERVOTIME);
     secondservo.write(90);
-    delay(5000);
+    delay(2500); //additional delay for primary servo to deliver additional water to plant A
     mainservo.write(0);
     delay(SERVOTIME);
     mainservo.write(90);
