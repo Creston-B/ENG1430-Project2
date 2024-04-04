@@ -11,6 +11,13 @@ int SERVOTIME = 700; //ms for servo to spin for a valve cycle
 //value determinig if servo was put in open or closed state
 bool valveopen;
 
+
+int MAINOPENVAL = 0;
+int MAINCLOSEDVAL = 180;
+
+int SECONDOPENVAL = 0;
+int SECONDCLOSEDVAL = 180;
+
 Servo secondservo;
 Servo mainservo;
 
@@ -49,15 +56,15 @@ void setup() {
   uint16_t initread = ss.touchRead(0);
 
   if(initread >= 500) { // Rotate to closed potiiton if above or equal to arbitrary
-    secondservo.write(180);
-    mainservo.write(0);
+    secondservo.write(SECONDCLOSEDVAL);
+    mainservo.write(MAINCLOSEDVAL);
     delay(SERVOTIME);
     secondservo.write(90);
     mainservo.write(90);
     valveopen = false;
   } else if (initread < 500) { // Rotate to open position if below arbitrary
-    secondservo.write(0);
-    mainservo.write(180);
+    secondservo.write(SECONDOPENVAL);
+    mainservo.write(MAINOPENVAL);
     delay(SERVOTIME);
     secondservo.write(90);
     mainservo.write(90);
@@ -73,18 +80,18 @@ void loop() {
   // test for wet / dry conditions
   if((capread > WETVAL) && (valveopen == true)) { 
   // Rotate to closed potiiton if wet and open
-    secondservo.write(180);
+    secondservo.write(SECONDCLOSEDVAL);
     delay(SERVOTIME);
     secondservo.write(90);
-    delay(5000);
-    mainservo.write(0);
+    delay(2500);
+    mainservo.write(MAINCLOSEDVAL);
     delay(SERVOTIME);
     mainservo.write(90);
     valveopen = false;
   } else if ((capread < DRYVAL) && (valveopen == false)) { 
     // Rotate to open position if dry and closed
-    secondservo.write(0);
-    mainservo.write(180);
+    secondservo.write(SECONDOPENVAL);
+    mainservo.write(MAINOPENVAL);
     delay(SERVOTIME);
     secondservo.write(90);
     mainservo.write(90);
